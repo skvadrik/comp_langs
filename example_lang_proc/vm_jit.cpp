@@ -1,14 +1,13 @@
-#include "code.h"
-#include "vm.h"
+#include "vm_jit.h"
 
 int vm_jit (std::vector<Insn> & bytecode)
 {
-    Code code;
+    ByteArrayEx code;
     for (unsigned int i = 0; i < bytecode.size (); ++i)
     {
         switch (bytecode[i].opcode)
         {
-            case VM_ADD:
+            case Insn::ADD:
             {
                 // pop rbx ; 5b
                 code.save_byte (0x5b);
@@ -21,7 +20,7 @@ int vm_jit (std::vector<Insn> & bytecode)
                 code.save_byte (0x50);
                 break;
             }
-            case VM_SUB:
+            case Insn::SUB:
             {
                 // pop rbx ; 5b
                 code.save_byte (0x5b);
@@ -34,7 +33,7 @@ int vm_jit (std::vector<Insn> & bytecode)
                 code.save_byte (0x50);
                 break;
             }
-            case VM_MUL:
+            case Insn::MUL:
             {
                 // pop rbx ; 5b
                 code.save_byte (0x5b);
@@ -47,7 +46,7 @@ int vm_jit (std::vector<Insn> & bytecode)
                 code.save_byte (0x50);
                 break;
             }
-            case VM_DIV:
+            case Insn::DIV:
             {
                 // pop rbx ; 5b
                 code.save_byte (0x5b);
@@ -63,7 +62,7 @@ int vm_jit (std::vector<Insn> & bytecode)
                 code.save_byte (0x50);
                 break;
             }
-            case VM_PUSH:
+            case Insn::PUSH:
             {
                 // push <imm32> ; 68 <byte1> <byte2> <byte3> <byte4> (little-endian)
                 unsigned char byte1 = (bytecode[i].number >> (8 * 0)) & 0xFF;

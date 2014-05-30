@@ -1,6 +1,6 @@
 #!/bin/sh
 
-g++ -O2 -o all \
+g++ -O2 -o all -ggdb3 \
     parser.cpp \
     interpreter.cpp \
     compiler.cpp \

@@ -1,6 +1,6 @@
 #include <stack>
 
-#include "vm.h"
+#include "vm_run.h"
 
 int vm_run (std::vector<Insn> & bytecode)
 {
@@ -9,35 +9,35 @@ int vm_run (std::vector<Insn> & bytecode)
     {
         switch (bytecode[i].opcode)
         {
-            case VM_ADD:
+            case Insn::ADD:
             {
                 int l = stack.top (); stack.pop ();
                 int r = stack.top (); stack.pop ();
                 stack.push (l + r);
                 break;
             }
-            case VM_SUB:
+            case Insn::SUB:
             {
                 int l = stack.top (); stack.pop ();
                 int r = stack.top (); stack.pop ();
                 stack.push (r - l);
                 break;
             }
-            case VM_MUL:
+            case Insn::MUL:
             {
                 int l = stack.top (); stack.pop ();
                 int r = stack.top (); stack.pop ();
                 stack.push (l * r);
                 break;
             }
-            case VM_DIV:
+            case Insn::DIV:
             {
                 int l = stack.top (); stack.pop ();
                 int r = stack.top (); stack.pop ();
                 stack.push (r / l);
                 break;
             }
-            case VM_PUSH:
+            case Insn::PUSH:
                 stack.push (bytecode[i].number);
                 break;
         }

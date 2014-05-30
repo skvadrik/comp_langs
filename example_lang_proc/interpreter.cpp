@@ -4,23 +4,23 @@ int interpret (Node * node)
 {
     switch (node->type)
     {
-        case NODE_OP:
+        case Node::OP:
         {
             int left = interpret (node->value.op->left);
             int right = interpret (node->value.op->right);
             switch (node->value.op->type)
             {
-                case OP_ADD:
+                case Op::ADD:
                     return left + right;
-                case OP_SUB:
+                case Op::SUB:
                     return left - right;
-                case OP_MUL:
+                case Op::MUL:
                     return left * right;
-                case OP_DIV:
+                case Op::DIV:
                     return left / right;
             }
         }
-        case NODE_NUMBER:
+        case Node::NUMBER:
             return node->value.number;
     }
 }

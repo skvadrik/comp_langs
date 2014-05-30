@@ -1,31 +1,28 @@
-#ifndef __CODE__
-#define __CODE__
-
 #include <stdio.h>
 #include <string.h>
 #include <sys/mman.h>
+#include <vector>
 
-class Code
+#include "vm_bytecode.h"
+
+int vm_jit (std::vector<Insn> & bytecode);
+
+class ByteArrayEx
 {
     unsigned int size_max;
     unsigned int size;
     unsigned char * buffer;
 
   public:
-    Code ()
+    ByteArrayEx ()
         : size_max (1024)
         , size (0)
         , buffer ((unsigned char *) mmap (0, size_max, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0))
     { }
 
-    ~Code ()
+    ~ByteArrayEx ()
     {
         munmap (buffer, size_max);
-    }
-
-    int get_size () const
-    {
-        return size;
     }
 
     void save_byte (unsigned char b)
@@ -48,11 +45,4 @@ class Code
         fptr_t f = (fptr_t) buffer;
         return f ();
     }
-
-    void dump (FILE * f) const
-    {
-        fwrite (buffer, 1, size, f);
-    }
 };
-
-#endif // __CODE__

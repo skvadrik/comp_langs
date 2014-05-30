@@ -538,20 +538,27 @@ k-й разряд первого слагаемого и k-й разряд вт�
     , backgroundcolor=\color{cgray}
     }
 \lstset{style=cxx}
-\lstinputlisting[language=C++]{example_lang_proc/code.h}
 ...
 \subsubsection{Язык}
 ...
-\subsubsection{Парсер и AST}
-...
+\subsubsection{Парсер}
+\lstinputlisting[language=C++]{example_lang_proc/parser.cpp}
+\lstinputlisting[language=C++]{example_lang_proc/parser.h}
 \subsubsection{Интерпретатор}
-...
+\lstinputlisting[language=C++]{example_lang_proc/interpreter.cpp}
+\lstinputlisting[language=C++]{example_lang_proc/interpreter.h}
 \subsubsection{Компилятор}
-...
-\subsubsection{Виртуальная машина}
-...
-\subsubsection{JIT}
-...
+\lstinputlisting[language=C++]{example_lang_proc/compiler.cpp}
+\lstinputlisting[language=C++]{example_lang_proc/compiler.h}
+\subsubsection{Виртуальная машина: байткод}
+\lstinputlisting[language=C++]{example_lang_proc/vm_bytecode.cpp}
+\lstinputlisting[language=C++]{example_lang_proc/vm_bytecode.h}
+\subsubsection{Виртуальная машина: интерпретатор байткода}
+\lstinputlisting[language=C++]{example_lang_proc/vm_run.cpp}
+\lstinputlisting[language=C++]{example_lang_proc/vm_run.h}
+\subsubsection{Виртуальная машина: JIT-компилятор байткода}
+\lstinputlisting[language=C++]{example_lang_proc/vm_jit.cpp}
+\lstinputlisting[language=C++]{example_lang_proc/vm_jit.h}
 \subsection{Как всё в реальной жизни}
 ...
 \section{Синтаксический анализ}

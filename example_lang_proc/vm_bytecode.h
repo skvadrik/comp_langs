@@ -1,18 +1,13 @@
+#ifndef __VM_BYTECODE__
+#define __VM_BYTECODE__
+
 #include <vector>
 
 #include "parser.h"
 
-enum Opcode
-    { VM_ADD
-    , VM_SUB
-    , VM_MUL
-    , VM_DIV
-    , VM_PUSH
-    };
-
 struct Insn
 {
-    Opcode opcode;
+    enum Opcode {ADD, SUB, MUL, DIV, PUSH} opcode;
     int number;
 
     Insn (Opcode op)
@@ -21,11 +16,11 @@ struct Insn
     { }
 
     Insn (int n)
-        : opcode (VM_PUSH)
+        : opcode (PUSH)
         , number (n)
     { }
 };
 
 void vm_bytecode (Node * node, std::vector<Insn> & bytecode);
-int vm_run (std::vector<Insn> & bytecode);
-int vm_jit (std::vector<Insn> & bytecode);
+
+#endif // __VM_BYTECODE__

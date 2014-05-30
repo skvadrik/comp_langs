@@ -1,55 +1,56 @@
 #include "parser.h"
 
+void parse (const char * & s, AST & ast)
+{
+    ast.root = parse_expr (s);
+}
+
 Node * parse_expr (const char * & s)
 {
-    Node * left = parse_term (s);
+    Node * l = parse_term (s);
     for (;;)
     {
         switch (*s)
         {
             case '+':
             {
-                Node * right = parse_term (++s);
-                Op * op = new Op (OP_ADD, left, right);
-                left = new Node (NODE_OP, op);
+                Node * r = parse_term (++s);
+                l = new Node (Node::OP, new Op (Op::ADD, l, r));
                 break;
             }
             case '-':
             {
-                Node * right = parse_term (++s);
-                Op * op = new Op (OP_SUB, left, right);
-                left = new Node (NODE_OP, op);
+                Node * r = parse_term (++s);
+                l = new Node (Node::OP, new Op (Op::SUB, l, r));
                 break;
             }
             default:
-                return left;
+                return l;
         }
     }
 }
 
 Node * parse_term (const char * & s)
 {
-    Node * left = parse_factor (s);
+    Node * l = parse_factor (s);
     for (;;)
     {
         switch (*s)
         {
             case '*':
             {
-                Node * right = parse_term (++s);
-                Op * op = new Op (OP_MUL, left, right);
-                left = new Node (NODE_OP, op);
+                Node * r = parse_term (++s);
+                l = new Node (Node::OP, new Op (Op::MUL, l, r));
                 break;
             }
             case '/':
             {
-                Node * right = parse_term (++s);
-                Op * op = new Op (OP_DIV, left, right);
-                left = new Node (NODE_OP, op);
+                Node * r = parse_term (++s);
+                l = new Node (Node::OP, new Op (Op::DIV, l, r));
                 break;
             }
             default:
-                return left;
+                return l;
         }
     }
 }
@@ -60,9 +61,9 @@ Node * parse_factor (const char * & s)
     {
         case '(':
         {
-            Node * expr = parse_expr (++s);
+            Node * e = parse_expr (++s);
             ++s; // skip ')'
-            return expr;
+            return e;
         }
         default:
             return parse_prim (s);
@@ -71,7 +72,7 @@ Node * parse_factor (const char * & s)
 
 Node * parse_prim (const char * & s)
 {
-    int result = 0;
+    int n = 0;
     for (;;)
     {
         switch (*s)
@@ -87,12 +88,12 @@ Node * parse_prim (const char * & s)
             case '8':
             case '9':
             {
-                result = result * 10 + (*s - '0');
+                n = n * 10 + (*s - '0');
                 ++s;
                 break;
             }
             default:
-                return new Node (NODE_NUMBER, result);
+                return new Node (n);
         }
     }
 }
