@@ -1,8 +1,10 @@
 \documentclass[11pt]{book}
-\usepackage[utf8]{inputenc}
 \usepackage[russian]{babel}
-\usepackage{graphicx}
+\usepackage{color}
 \usepackage{fullpage}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{listings}
 
 \title{
     \huge{Языки программирования. Взгляд изнутри}
@@ -520,6 +522,23 @@ k-й разряд первого слагаемого и k-й разряд вт�
 \subsection{Виртуальные машины}
 ...
 \subsection{Детсадовский пример}
+\definecolor{cgray}{rgb}{0.96, 0.95, 0.9}
+\definecolor{cblue1}{rgb}{0.0, 0.15, 0.3}
+\definecolor{cblue2}{rgb}{0.0, 0.4, 0.6}
+\definecolor{cblue3}{rgb}{0.0, 0.7, 1.0}
+\definecolor{cgreen}{rgb}{0.2, 0.6, 0.0}
+\lstdefinestyle{cxx}
+    { numbers=left
+    , numberstyle=\footnotesize\ttfamily\color{cblue3}
+    , breaklines=true
+    , language=C++
+    , basicstyle=\footnotesize\ttfamily\color{cblue1}
+    , keywordstyle=\footnotesize\ttfamily\color{cblue2}
+    , commentstyle=\itshape\color{cgreen}
+    , backgroundcolor=\color{cgray}
+    }
+\lstset{style=cxx}
+\lstinputlisting[language=C++]{example_lang_proc/code.h}
 ...
 \subsubsection{Язык}
 ...
