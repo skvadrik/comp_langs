@@ -1,4 +1,5 @@
 \documentclass[11pt]{book}
+\usepackage{amsmath}
 \usepackage[russian]{babel}
 \usepackage{color}
 \usepackage{fullpage}
@@ -6,14 +7,30 @@
 \usepackage{graphicx}
 \usepackage{listings}
 
+% for nice symbols
+\usepackage{amssymb}
+\usepackage{textcomp}
+\usepackage{wasysym}
+\usepackage{marvosym}
+
 \title{
-    \huge{Языки программирования. Взгляд изнутри}
-    \\
-    \large{или}
-    \\
-    \huge{Куда идёшь, компьютер}
+\small{\textleaf}
+\huge{\textleaf}
+\huge{\quad \quad}
+\small{\textborn} \ 
+\small{\APLstar} \ 
+\huge{\textborn} \ 
+\huge{\APLstar} \ 
+\Huge{$\bigstar$} \ 
+\huge{\APLstar} \ 
+\huge{\textborn} \ 
+\small{\APLstar} \ 
+\small{\textborn}
+\huge{\quad \quad}
+\huge{\textleaf}
+\small{\textleaf}
 }
-\author{\Large (в вольном изложении братца)}
+\author{\Large (в вольном изложении братца) \\ \huge{\Bicycle}}
 \date{май 2014}
 
 \begin{document}
@@ -538,9 +555,23 @@ k-й разряд первого слагаемого и k-й разряд вт�
     , backgroundcolor=\color{cgray}
     }
 \lstset{style=cxx}
-...
+Теперь возьмём игрушечный язык и построим для него:
+\begin{itemize}
+\item Интерпретатор
+\item Компилятор
+\item Виртуальную машину
+\item JIT-компилятор
+\end{itemize}
+
 \subsubsection{Язык}
-...
+Язык я выберу очень простой: арифметические операции над целыми числами
+в десятичном представлении. Этот язык можно описать так:
+$$digit \ ::= \ 0 \ | \ 1 \ | \ 2 \ | \ 3 \ | \ 4 \ | \ 5 \ | \ 6 \ | \ 7 \ | \ 8 \ | \ 9$$
+$$number \ ::= \ number \ digit \ | \ digit$$
+$$factor \ ::= \ number \ | \ ( expr )$$
+$$term \ ::= \ term * factor \ | \ term / factor \ | \ factor$$
+$$expr \ ::= \ expr + term \ | \ expr - term \ | \ term$$
+
 \subsubsection{Парсер}
 \lstinputlisting[language=C++]{example_lang_proc/parser.cpp}
 \lstinputlisting[language=C++]{example_lang_proc/parser.h}
