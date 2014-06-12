@@ -21,6 +21,6 @@ struct Insn
     { }
 };
 
-void vm_bytecode (Node * node, std::vector<Insn> & bytecode);
+void vm_bytecode (AST * ast, std::vector<Insn> & bytecode);
 
 #endif // __VM_BYTECODE__

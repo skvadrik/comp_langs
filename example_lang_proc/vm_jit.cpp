@@ -1,8 +1,9 @@
+#include "code.h"
 #include "vm_jit.h"
 
 int vm_jit (std::vector<Insn> & bytecode)
 {
-    ByteArrayEx code;
+    Code code;
     for (unsigned int i = 0; i < bytecode.size (); ++i)
     {
         switch (bytecode[i].opcode)
@@ -13,7 +14,7 @@ int vm_jit (std::vector<Insn> & bytecode)
                 code.save_byte (0x5b);
                 // pop rax ; 58
                 code.save_byte (0x58);
-                // add rax, rbx ; 01 d8
+                // add eax, ebx ; 01 d8
                 code.save_byte (0x01);
                 code.save_byte (0xd8);
                 // push rax ; 50
@@ -26,7 +27,7 @@ int vm_jit (std::vector<Insn> & bytecode)
                 code.save_byte (0x5b);
                 // pop rax ; 58
                 code.save_byte (0x58);
-                // sub rax, rbx ; 29 d8
+                // sub eax, ebx ; 29 d8
                 code.save_byte (0x29);
                 code.save_byte (0xd8);
                 // push rax ; 50
@@ -39,7 +40,7 @@ int vm_jit (std::vector<Insn> & bytecode)
                 code.save_byte (0x5b);
                 // pop rax ; 58
                 code.save_byte (0x58);
-                // imul rbx ; f7 eb
+                // imul ebx ; f7 eb
                 code.save_byte (0xf7);
                 code.save_byte (0xeb);
                 // push rax ; 50
@@ -52,10 +53,9 @@ int vm_jit (std::vector<Insn> & bytecode)
                 code.save_byte (0x5b);
                 // pop rax ; 58
                 code.save_byte (0x58);
-                // xor rdx, rdx ; 31 d2
-                code.save_byte (0x31);
-                code.save_byte (0xd2);
-                // idiv rbx ; f7 fb
+                // cdq ; 99, sign-extend edx:eax of eax
+                code.save_byte (0x99);
+                // idiv ebx ; f7 fb
                 code.save_byte (0xf7);
                 code.save_byte (0xfb);
                 // push rax ; 50

@@ -1,26 +1,34 @@
 #include "interpreter.h"
 
-int interpret (Node * node)
+int interpret (AST * ast)
 {
-    switch (node->type)
+    switch (ast->type)
     {
-        case Node::OP:
+        case AST::NUMBER:
+            return ast->value.number;
+        case AST::ADD:
         {
-            int left = interpret (node->value.op->left);
-            int right = interpret (node->value.op->right);
-            switch (node->value.op->type)
-            {
-                case Op::ADD:
-                    return left + right;
-                case Op::SUB:
-                    return left - right;
-                case Op::MUL:
-                    return left * right;
-                case Op::DIV:
-                    return left / right;
-            }
+            int l = interpret (ast->value.operands.left);
+            int r = interpret (ast->value.operands.right);
+            return l + r;
         }
-        case Node::NUMBER:
-            return node->value.number;
+        case AST::SUB:
+        {
+            int l = interpret (ast->value.operands.left);
+            int r = interpret (ast->value.operands.right);
+            return l - r;
+        }
+        case AST::MUL:
+        {
+            int l = interpret (ast->value.operands.left);
+            int r = interpret (ast->value.operands.right);
+            return l * r;
+        }
+        case AST::DIV:
+        {
+            int l = interpret (ast->value.operands.left);
+            int r = interpret (ast->value.operands.right);
+            return l / r;
+        }
     }
 }

@@ -1,99 +1,97 @@
 #include "parser.h"
 
-void parse (const char * & s, AST & ast)
+AST * expr (const char * & s)
 {
-    ast.root = parse_expr (s);
+    AST * l = term (s);
+    return expr1 (s, l);
 }
 
-Node * parse_expr (const char * & s)
+AST * expr1 (const char * & s, AST * l)
 {
-    Node * l = parse_term (s);
-    for (;;)
+    switch (*s)
     {
-        switch (*s)
+        case '+':
         {
-            case '+':
-            {
-                Node * r = parse_term (++s);
-                l = new Node (Node::OP, new Op (Op::ADD, l, r));
-                break;
-            }
-            case '-':
-            {
-                Node * r = parse_term (++s);
-                l = new Node (Node::OP, new Op (Op::SUB, l, r));
-                break;
-            }
-            default:
-                return l;
+            AST * r = term (++s);
+            l = new AST (AST::ADD, l, r);
+            return expr1 (s, l);
         }
+        case '-':
+        {
+            AST * r = term (++s);
+            l = new AST (AST::SUB, l, r);
+            return expr1 (s, l);
+        }
+        default:
+            return l;
     }
 }
 
-Node * parse_term (const char * & s)
+AST * term (const char * & s)
 {
-    Node * l = parse_factor (s);
-    for (;;)
+    AST * l = factor (s);
+    return term1 (s, l);
+}
+
+AST * term1 (const char * & s, AST * l)
+{
+    switch (*s)
     {
-        switch (*s)
+        case '*':
         {
-            case '*':
-            {
-                Node * r = parse_term (++s);
-                l = new Node (Node::OP, new Op (Op::MUL, l, r));
-                break;
-            }
-            case '/':
-            {
-                Node * r = parse_term (++s);
-                l = new Node (Node::OP, new Op (Op::DIV, l, r));
-                break;
-            }
-            default:
-                return l;
+            AST * r = factor (++s);
+            l = new AST (AST::MUL, l, r);
+            return term1 (s, l);
         }
+        case '/':
+        {
+            AST * r = factor (++s);
+            l = new AST (AST::DIV, l, r);
+            return term1 (s, l);
+        }
+        default:
+            return l;
     }
 }
 
-Node * parse_factor (const char * & s)
+AST * factor (const char * & s)
 {
     switch (*s)
     {
         case '(':
         {
-            Node * e = parse_expr (++s);
+            AST * e = expr (++s);
             ++s; // skip ')'
             return e;
         }
         default:
-            return parse_prim (s);
+            return new AST (number (s, 0));
     }
 }
 
-Node * parse_prim (const char * & s)
+unsigned int number (const char * & s, unsigned int n)
 {
-    int n = 0;
-    for (;;)
+    unsigned char d = digit (s);
+    if (d == 0xFF)
+        return n;
+    else
+        return number (s, n * 10 + d);
+}
+
+unsigned char digit (const char * & s)
+{
+    switch (*s)
     {
-        switch (*s)
-        {
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-            {
-                n = n * 10 + (*s - '0');
-                ++s;
-                break;
-            }
-            default:
-                return new Node (n);
-        }
+        case '0': ++s; return 0;
+        case '1': ++s; return 1;
+        case '2': ++s; return 2;
+        case '3': ++s; return 3;
+        case '4': ++s; return 4;
+        case '5': ++s; return 5;
+        case '6': ++s; return 6;
+        case '7': ++s; return 7;
+        case '8': ++s; return 8;
+        case '9': ++s; return 9;
+        default:  return 0xFF;
     }
 }

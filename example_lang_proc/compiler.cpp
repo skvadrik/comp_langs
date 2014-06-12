@@ -1,94 +1,100 @@
 #include <elf.h>
+#include <string.h>
 
 #include "compiler.h"
 
-void compile (Node * node, ByteArray & code)
+void compile (AST * ast, std::vector<unsigned char> & code)
 {
-    switch (node->type)
+    switch (ast->type)
     {
-        case Node::OP:
+        case AST::NUMBER:
         {
-            compile (node->value.op->left, code);
-
-            // push rax ; 50
-            code.save_byte (0x50);
-
-            compile (node->value.op->right, code);
-
-            // mov rbx, rax ; 89 c3
-            code.save_byte (0x89);
-            code.save_byte (0xc3);
-            // pop rax ; 58
-            code.save_byte (0x58);
-
-            switch (node->value.op->type)
-            {
-                case Op::ADD:
-                    // add rax, rbx ; 01 d8
-                    code.save_byte (0x01);
-                    code.save_byte (0xd8);
-                    return;
-                case Op::SUB:
-                    // sub rax, rbx ; 29 d8
-                    code.save_byte (0x29);
-                    code.save_byte (0xd8);
-                    return;
-                case Op::MUL:
-                    // imul rbx ; f7 eb
-                    code.save_byte (0xf7);
-                    code.save_byte (0xeb);
-                    return;
-                case Op::DIV:
-                    // xor rdx, rdx ; 31 d2
-                    code.save_byte (0x31);
-                    code.save_byte (0xd2);
-                    // idiv rbx ; f7 fb
-                    code.save_byte (0xf7);
-                    code.save_byte (0xfb);
-                    return;
-            }
+            // mov eax, <imm32> ; b8 <byte1> <byte2> <byte3> <byte4> (little-endian)
+            unsigned char byte1 = (ast->value.number >> (8 * 0)) & 0xFF;
+            unsigned char byte2 = (ast->value.number >> (8 * 1)) & 0xFF;
+            unsigned char byte3 = (ast->value.number >> (8 * 2)) & 0xFF;
+            unsigned char byte4 = (ast->value.number >> (8 * 3)) & 0xFF;
+            code.push_back (0xb8);
+            code.push_back (byte1);
+            code.push_back (byte2);
+            code.push_back (byte3);
+            code.push_back (byte4);
+            return;
         }
-        case Node::NUMBER:
+        case AST::ADD:
         {
-            // mov rax, <imm32> ; b8 <byte1> <byte2> <byte3> <byte4> (little-endian)
-            unsigned char byte1 = (node->value.number >> (8 * 0)) & 0xFF;
-            unsigned char byte2 = (node->value.number >> (8 * 1)) & 0xFF;
-            unsigned char byte3 = (node->value.number >> (8 * 2)) & 0xFF;
-            unsigned char byte4 = (node->value.number >> (8 * 3)) & 0xFF;
-            code.save_byte (0xb8);
-            code.save_byte (byte1);
-            code.save_byte (byte2);
-            code.save_byte (byte3);
-            code.save_byte (byte4);
+            compile_operands (ast, code);
+            // add eax, ebx ; 01 d8
+            code.push_back (0x01);
+            code.push_back (0xd8);
+            return;
+        }
+        case AST::SUB:
+        {
+            compile_operands (ast, code);
+            // sub eax, ebx ; 29 d8
+            code.push_back (0x29);
+            code.push_back (0xd8);
+            return;
+        }
+        case AST::MUL:
+        {
+            compile_operands (ast, code);
+            // imul ebx ; f7 eb
+            code.push_back (0xf7);
+            code.push_back (0xeb);
+            return;
+        }
+        case AST::DIV:
+        {
+            compile_operands (ast, code);
+            // cdq ; 99, sign-extend edx:eax of eax
+            code.push_back (0x99);
+            // idiv ebx ; f7 fb
+            code.push_back (0xf7);
+            code.push_back (0xfb);
             return;
         }
     }
 }
 
-void compile_exit (ByteArray & code)
+void compile_operands (AST * ast, std::vector<unsigned char> & code)
 {
-    // mov rbx, rax ; 89 c3
-    code.save_byte (0x89);
-    code.save_byte (0xc3);
-    // mov rax, 0x01 ; b8 01 00 00 00 (little-endian)
-    code.save_byte (0xb8);
-    code.save_byte (0x01);
-    code.save_byte (0);
-    code.save_byte (0);
-    code.save_byte (0);
-    // int 80 ; cd 80
-    code.save_byte (0xcd);
-    code.save_byte (0x80);
+    compile (ast->value.operands.left, code);
+    // push rax ; 50
+    code.push_back (0x50);
+    compile (ast->value.operands.right, code);
+    // mov ebx, eax ; 89 c3
+    code.push_back (0x89);
+    code.push_back (0xc3);
+    // pop rax ; 58
+    code.push_back (0x58);
 }
 
-void gen_elf64 (Node * node, FILE * out)
+void compile_exit (std::vector<unsigned char> & code)
 {
-    ByteArray code;
-    compile (node, code);
+    // mov ebx, eax ; 89 c3
+    code.push_back (0x89);
+    code.push_back (0xc3);
+    // mov eax, 0x01 ; b8 01 00 00 00 (little-endian)
+    code.push_back (0xb8);
+    code.push_back (0x01);
+    code.push_back (0);
+    code.push_back (0);
+    code.push_back (0);
+    // int 80 ; cd 80
+    code.push_back (0xcd);
+    code.push_back (0x80);
+}
+
+void gen_elf64 (AST * ast, FILE * out)
+{
+    std::vector<unsigned char> code;
+    compile (ast, code);
     compile_exit (code);
 
     const uint64_t load_addr = 0x400000;
-    const uint64_t total_size = sizeof (Elf64_Ehdr) + sizeof (Elf64_Phdr) + code.get_size ();
+    const uint64_t total_size = sizeof (Elf64_Ehdr) + sizeof (Elf64_Phdr) + code.size ();
 
     // elf64 elf header
     Elf64_Ehdr ehdr;
@@ -132,5 +138,6 @@ void gen_elf64 (Node * node, FILE * out)
 
     fwrite (&ehdr, 1, sizeof (Elf64_Ehdr), out);
     fwrite (&phdr, 1, sizeof (Elf64_Phdr), out);
-    code.dump (out);
+    for (unsigned int i = 0; i < code.size (); ++i)
+        fwrite (&code[i], 1, 1, out);
 }

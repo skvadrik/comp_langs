@@ -16,20 +16,20 @@ int main (int argc, char ** argv)
     }
 
     const char * s = argv[1];
-    AST ast;
-    parse (s, ast);
+    AST * ast = expr (s);
 
-    printf ("i> %d\n", interpret (ast.root));
+    printf ("i> %d\n", interpret (ast));
 
     FILE * out = fopen ("code", "w");
-    gen_elf64 (ast.root, out);
+    gen_elf64 (ast, out);
     fclose (out);
 
     std::vector<Insn> bytecode;
-    vm_bytecode (ast.root, bytecode);
+    vm_bytecode (ast, bytecode);
     printf ("vm> %d\n", vm_run (bytecode));
 
     printf ("vm-jit> %d\n", vm_jit (bytecode));
 
+    delete ast;
     return 0;
 }

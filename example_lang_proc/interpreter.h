@@ -1,3 +1,3 @@
 #include "parser.h"
 
-int interpret (Node * node);
+int interpret (AST * ast);
