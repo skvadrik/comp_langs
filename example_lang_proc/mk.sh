@@ -4,6 +4,7 @@ g++ -O2 -W -Wall -Wextra -o all \
     ast.cpp \
     code.cpp \
     compiler.cpp \
+    gen_elf64.cpp \
     interpreter.cpp \
     main.cpp \
     parser.cpp \
