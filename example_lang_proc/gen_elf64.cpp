@@ -34,12 +34,12 @@ void gen_elf64 (AST * ast, FILE * out)
     ehdr.e_ident[EI_MAG1]       = ELFMAG1;
     ehdr.e_ident[EI_MAG2]       = ELFMAG2;
     ehdr.e_ident[EI_MAG3]       = ELFMAG3;
-    ehdr.e_ident[EI_CLASS]      = ELFCLASS64;    // class (64-bit)
-    ehdr.e_ident[EI_DATA]       = ELFDATA2LSB;   // 2's complement little-endian
-    ehdr.e_ident[EI_VERSION]    = EV_CURRENT;    // version of ELF specification
-    ehdr.e_ident[EI_OSABI]      = ELFOSABI_SYSV; // OS ABI (UNIX System V)
-    ehdr.e_ident[EI_ABIVERSION] = 0;             // ABI version
-    memset (&ehdr.e_ident[EI_PAD], 0, 7);        // reserved
+    ehdr.e_ident[EI_CLASS]      = ELFCLASS64;     // class (64-bit)
+    ehdr.e_ident[EI_DATA]       = ELFDATA2LSB;    // 2's complement little-endian
+    ehdr.e_ident[EI_VERSION]    = EV_CURRENT;     // version of ELF specification
+    ehdr.e_ident[EI_OSABI]      = ELFOSABI_LINUX; // OS ABI (Linux)
+    ehdr.e_ident[EI_ABIVERSION] = 0;              // ABI version
+    memset (&ehdr.e_ident[EI_PAD], 0, 7);         // reserved
     ehdr.e_type = ET_EXEC;                  // executable file
     ehdr.e_machine = EM_X86_64;             // machine architecture
     ehdr.e_version = EV_CURRENT;            // file version
@@ -55,7 +55,7 @@ void gen_elf64 (AST * ast, FILE * out)
     ehdr.e_phnum = 1;                       // program header count
     ehdr.e_shentsize = 0;                   // section header entry size
     ehdr.e_shnum = 0;                       // section header count
-    ehdr.e_shstrndx = 0;                    // section header strtab section index
+    ehdr.e_shstrndx = SHN_UNDEF;            // section header strtab section index
 
     // elf64 program header
     Elf64_Phdr phdr;
