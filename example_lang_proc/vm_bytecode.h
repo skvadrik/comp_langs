@@ -7,7 +7,7 @@
 
 struct Insn
 {
-    enum Opcode {ADD, SUB, MUL, DIV, PUSH} opcode;
+    enum Opcode {ADD, SUB, MUL, DIV, NUMBER} opcode;
     int number;
 
     Insn (Opcode op)
@@ -16,7 +16,7 @@ struct Insn
     { }
 
     Insn (int n)
-        : opcode (PUSH)
+        : opcode (NUMBER)
         , number (n)
     { }
 };

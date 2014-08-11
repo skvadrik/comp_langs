@@ -37,7 +37,7 @@ int vm_run (std::vector<Insn> & bytecode)
                 stack.push (r / l);
                 break;
             }
-            case Insn::PUSH:
+            case Insn::NUMBER:
                 stack.push (bytecode[i].number);
                 break;
         }

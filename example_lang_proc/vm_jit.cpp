@@ -62,7 +62,7 @@ int vm_jit (std::vector<Insn> & bytecode)
                 code.save_byte (0x50);
                 break;
             }
-            case Insn::PUSH:
+            case Insn::NUMBER:
             {
                 // push <imm32> ; 68 <byte1> <byte2> <byte3> <byte4> (little-endian)
                 unsigned char byte1 = (bytecode[i].number >> (8 * 0)) & 0xFF;

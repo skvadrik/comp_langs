@@ -30,7 +30,6 @@ void Code::save_byte (unsigned char byte)
 
 int Code::exec ()
 {
-    typedef int (* fptr_t) ();
-    fptr_t f = (fptr_t) buffer;
+    int (* f) () = (int (*) ()) buffer;
     return f ();
 }
